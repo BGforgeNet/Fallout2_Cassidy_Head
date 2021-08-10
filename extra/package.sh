@@ -18,8 +18,8 @@ for actor in $(ls); do
   mkdir -p "$dst/$actor/sound/speech" "$dst/${actor}_hq/sound/speech"
   for wav in $(ls); do
     # I assume ffmpeg is better at resampling than snd2acm
-    ffmpeg -i "$wav" -ac 2 -ar 44100 -map_metadata -1 "$dst/${actor}_hq/sound/speech/$wav"
-    ffmpeg -i "$wav" -ac 2 -ar 22050 -map_metadata -1 "$dst/${actor}/sound/speech/$wav"
+    ffmpeg -i "$wav" -ac 2 -ar 44100 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_hq/sound/speech/$wav"
+    ffmpeg -i "$wav" -ac 2 -ar 22050 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}/sound/speech/$wav"
   done
   cd "$dst/${actor}/sound/speech"
   cp "$bin_dir/snd2acm.exe" .
