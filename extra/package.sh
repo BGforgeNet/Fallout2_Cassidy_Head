@@ -18,7 +18,7 @@ for actor in $(ls); do
   mkdir -p "$dst/${actor}_lq/sound/speech/casdy" "$dst/${actor}_hq/sound/speech/casdy"
   for wav in $(ls); do
     # I assume ffmpeg is better at resampling than snd2acm
-    ffmpeg -i "$wav" -ac 2 -ar 44100 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_hq/sound/speech/casdy/$wav"
+    ffmpeg -i "$wav" -ac 1 -ar 44100 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_hq/sound/speech/casdy/$wav"
     ffmpeg -i "$wav" -ac 1 -ar 22050 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_lq/sound/speech/casdy/$wav"
   done
   cd "$dst/${actor}_hq/sound/speech/casdy"
@@ -35,8 +35,8 @@ for actor in $(ls); do
   rm -f *.wav
   cd "$src/$actor"
   for wav in $(ls); do
-    ffmpeg -i "$wav" -ac 2 -ar 88200 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_hq/sound/speech/casdy/$wav"
-    ffmpeg -i "$wav" -ac 1 -ar 44100 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_lq/sound/speech/casdy/$wav"
+    ffmpeg -i "$wav" -ac 2 -ar 44100 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_hq/sound/speech/casdy/$wav"
+    ffmpeg -i "$wav" -ac 2 -ar 22050 -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_lq/sound/speech/casdy/$wav"
   done
   cd "$dst/${actor}_hq/sound/speech/casdy"
   for wav in $(ls *.wav); do
