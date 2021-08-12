@@ -13,7 +13,7 @@ jobs:
           set -xeu -o pipefail
           sudo dpkg --add-architecture i386
           sudo apt -qq update
-          sudo apt-get install -o=Dpkg::Use-Pty=0 -y wine-stable wine32 >/dev/null 2>&1
+          sudo apt-get install -o=Dpkg::Use-Pty=0 -y wine-stable wine32 ffmpeg >/dev/null 2>&1
           wineboot >/dev/null 2>&1
 
       - name: Build and package
