@@ -24,38 +24,34 @@ for actor in $(ls); do
   cd "$actor"
   rm -rf "$dst/${actor}_lq" "$dst/${actor}_hq"
   mkdir -p "$dst/${actor}_lq/sound/speech/casdy" "$dst/${actor}_hq/sound/speech/casdy"
+
   for wav in $(ls); do
     # I assume ffmpeg is better at resampling than snd2acm
     ffmpeg -i "$wav" -ac 1 -ar 44100 $ffmpeg_args "$dst/${actor}_hq/sound/speech/casdy/$wav"
     ffmpeg -i "$wav" -ac 1 -ar 22050 $ffmpeg_args "$dst/${actor}_lq/sound/speech/casdy/$wav"
   done
-  cd "$dst/${actor}_hq/sound/speech/casdy"
-  for wav in $(ls *.wav); do
-    acm="$(echo $wav | sed 's|\.wav|.acm|')"
-    $ipsdoc "$wav" "$acm"
+  for q in lq hq; do
+    cd "$dst/${actor}_${q}/sound/speech/casdy"
+    for wav in $(ls *.wav); do
+      acm="$(echo $wav | sed 's|\.wav|.acm|')"
+      $ipsdoc "$wav" "$acm"
+    done
+    rm -f *.wav
   done
-  rm -f *.wav
-  cd "$dst/${actor}_lq/sound/speech/casdy"
-  for wav in $(ls *.wav); do
-    acm="$(echo $wav | sed 's|\.wav|.acm|')"
-    $ipsdoc "$wav" "$acm"
-  done
-  rm -f *.wav
+
   cd "$src/$actor"
   for wav in $(ls); do
     ffmpeg -i "$wav" -ac 2 -ar 44100 $ffmpeg_args "$dst/${actor}_hq/sound/speech/casdy/$wav"
     ffmpeg -i "$wav" -ac 2 -ar 22050 $ffmpeg_args "$dst/${actor}_lq/sound/speech/casdy/$wav"
   done
-  cd "$dst/${actor}_hq/sound/speech/casdy"
-  for wav in $(ls *.wav); do
-    $wav2lip -i "$wav" -noACM -noAdj
+  for q in lq hq; do
+    cd "$dst/${actor}_${q}/sound/speech/casdy"
+    for wav in $(ls *.wav); do
+      $wav2lip -i "$wav" -noACM -noAdj
+    done
+    rm -f *.wav
   done
-  rm -f *.wav
-  cd "$dst/${actor}_lq/sound/speech/casdy"
-  for wav in $(ls *.wav); do
-    $wav2lip -i "$wav" -noACM -noAdj
-  done
-  rm -f *.wav
+
 done
 
 cd "$head_dir"
