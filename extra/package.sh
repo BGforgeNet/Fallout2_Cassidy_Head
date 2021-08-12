@@ -52,8 +52,8 @@ done
 
 cd "$head_dir"
 find . -type f | sed -e 's|^\.\/||' -e 's|\/|\\|g' | sort > "$file_list"
-rm -f "../../cassidy_head.dat"
-$dat2a "../../cassidy_head.dat" @"$file_list" 2>&1 | grep -v "wine: Read access denied for device"
+rm -f "../cassidy_head.dat"
+$dat2a "../cassidy_head.dat" @"$file_list" 2>&1 | grep -v "wine: Read access denied for device"
 cd ..
 
 cd "$dst"
