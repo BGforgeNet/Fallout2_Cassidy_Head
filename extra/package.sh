@@ -14,25 +14,38 @@ dst="$(realpath sound_out)"
 cd "$src"
 for actor in $(ls); do
   cd "$actor"
-  rm -rf "$dst/$actor" "$dst/${actor}_hq"
-  mkdir -p "$dst/$actor/sound/speech" "$dst/${actor}_hq/sound/speech"
+  rm -rf "$dst/${actor}_lq" "$dst/${actor}_hq"
+  mkdir -p "$dst/${actor}_lq/sound/speech/casdy" "$dst/${actor}_hq/sound/speech/casdy"
   for wav in $(ls); do
     # I assume ffmpeg is better at resampling than snd2acm
-    ffmpeg -i "$wav" -ac 2 -ar 44100 -map_metadata -1 "$dst/${actor}_hq/sound/speech/$wav"
-    ffmpeg -i "$wav" -ac 2 -ar 22050 -map_metadata -1 "$dst/${actor}/sound/speech/$wav"
+    ffmpeg -i "$wav" -ac 1 -ar 44100 -c:a pcm_s16le -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_hq/sound/speech/casdy/$wav"
+    ffmpeg -i "$wav" -ac 1 -ar 22050 -c:a pcm_s16le -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_lq/sound/speech/casdy/$wav"
   done
-  cd "$dst/${actor}/sound/speech"
-  cp "$bin_dir/snd2acm.exe" .
+  cd "$dst/${actor}_hq/sound/speech/casdy"
   for wav in $(ls *.wav); do
-    $wav2lip -i "$wav"
-  done
-  rm -f *.wav
-  cd "$dst/${actor}_hq/sound/speech"
-  rm -f snd2acm.exe
-  for wav in $(ls *.wav); do
-    $wav2lip -i "$wav" -noACM
     acm="$(echo $wav | sed 's|\.wav|.acm|')"
     ipsdoc "$wav" "$acm"
+  done
+  rm -f *.wav
+  cd "$dst/${actor}_lq/sound/speech/casdy"
+  for wav in $(ls *.wav); do
+    acm="$(echo $wav | sed 's|\.wav|.acm|')"
+    ipsdoc "$wav" "$acm"
+  done
+  rm -f *.wav
+  cd "$src/$actor"
+  for wav in $(ls); do
+    ffmpeg -i "$wav" -ac 2 -ar 44100 -c:a pcm_s16le -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_hq/sound/speech/casdy/$wav"
+    ffmpeg -i "$wav" -ac 2 -ar 22050 -c:a pcm_s16le -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1 "$dst/${actor}_lq/sound/speech/casdy/$wav"
+  done
+  cd "$dst/${actor}_hq/sound/speech/casdy"
+  for wav in $(ls *.wav); do
+    $wav2lip -i "$wav" -noACM -noAdj
+  done
+  rm -f *.wav
+  cd "$dst/${actor}_lq/sound/speech/casdy"
+  for wav in $(ls *.wav); do
+    $wav2lip -i "$wav" -noACM -noAdj
   done
   rm -f *.wav
 done
