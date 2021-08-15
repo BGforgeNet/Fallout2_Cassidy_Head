@@ -15,10 +15,17 @@ ffmpeg_args="-c:a pcm_s16le -fflags +bitexact -flags:v +bitexact -flags:a +bitex
 ipsdoc_repo="BGforgeNet/ipsdoc"
 ipsdoc_release_url="https://api.github.com/repos/$ipsdoc_repo/releases/latest"
 ipsdoc="$bin_dir/ipsdoc"
+lipdoc_repo="BGforgeNet/lipdoc"
+lipdoc_release_url="https://api.github.com/repos/$lipdoc_repo/releases/latest"
+lipdoc="$bin_dir/lipdoc"
 
 # get latest ipsdoc
 wget -nv -O "$ipsdoc" "$(curl -s $ipsdoc_release_url | grep browser_download_url | grep -v '\.exe' | awk -F '"' '{print $4}')"
 chmod +x $ipsdoc
+
+# get latest lipdoc
+wget -nv -O "$lipdoc" "$(curl -s $lipdoc_release_url | grep browser_download_url | grep -v '\.exe' | awk -F '"' '{print $4}')"
+chmod +x $lipdoc
 
 cd "$src"
 rm -rf "${dst_base}_lq" "${dst_base}_hq"
@@ -27,7 +34,7 @@ mkdir -p "${dst_base}_lq/sound/speech/casdy" "${dst_base}_hq/sound/speech/casdy"
 # sound quality is better without channel conversion...
 for wav in $(ls); do
   # I assume ffmpeg is better at resampling than snd2acm
-  ffmpeg -i "$wav" -ac 1 -ar 44100 $ffmpeg_args "${dst_base}_hq/sound/speech/casdy/$wav"
+  ffmpeg -i "$wav" -ac 2 -ar 44100 $ffmpeg_args "${dst_base}_hq/sound/speech/casdy/$wav"
   ffmpeg -i "$wav" -ac 1 -ar 22050 $ffmpeg_args "${dst_base}_lq/sound/speech/casdy/$wav"
 done
 for q in lq hq; do
@@ -42,15 +49,22 @@ done
 # ... but wav2lip wants stereo
 cd "$src"
 for wav in $(ls); do
-  ffmpeg -i "$wav" -ac 2 -ar 44100 $ffmpeg_args "${dst_base}_hq/sound/speech/casdy/$wav"
   ffmpeg -i "$wav" -ac 2 -ar 22050 $ffmpeg_args "${dst_base}_lq/sound/speech/casdy/$wav"
 done
-for q in lq hq; do
-  cd "${dst_base}_${q}/sound/speech/casdy"
-  for wav in $(ls *.wav); do
-    $wav2lip -i "$wav" -noACM -noAdj
-  done
-  rm -f *.wav
+
+cd "${dst_base}_lq/sound/speech/casdy"
+for wav in $(ls *.wav); do
+  $wav2lip -i "$wav" -noACM -noAdj
+done
+rm -f *.wav
+for q in $(ls *.txt *.lip); do
+  cp "$q" "${dst_base}_hq/sound/speech/casdy/$q"
+done
+
+cd "${dst_base}_hq/sound/speech/casdy"
+for lip in $(ls *.lip); do
+  $lipdoc "$lip"
+  $lipdoc "$lip"
 done
 
 cd "$head_dir"
