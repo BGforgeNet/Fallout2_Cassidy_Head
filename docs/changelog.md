@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Adam Dravean's voice: new lip sync, generated from each line's sound and text.
+
 ## Version 1
 
 - First stable release, same content as 0.2.
