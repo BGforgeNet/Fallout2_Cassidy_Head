@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## Version 2
 
 - New lip sync for both voices, generated from each line's sound and text.
 - Joey Bracken's voice comes in one version, 44.1 kHz: `cassidy_voice_joey_bracken.dat`.
