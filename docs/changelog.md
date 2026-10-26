@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Adam Dravean's voice: new lip sync, generated from each line's sound and text.
+- New lip sync for both voices, generated from each line's sound and text. Joey Bracken's HQ voice gets its own,
+  instead of one converted from the LQ voice.
 
 ## Version 1
 
