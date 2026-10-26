@@ -2,8 +2,8 @@
 
 ## Unreleased
 
-- New lip sync for both voices, generated from each line's sound and text. Joey Bracken's HQ voice gets its own,
-  instead of one converted from the LQ voice.
+- New lip sync for both voices, generated from each line's sound and text.
+- Joey Bracken's voice comes in one version, 44.1 kHz: `cassidy_voice_joey_bracken.dat`.
 
 ## Version 1
 

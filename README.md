@@ -19,7 +19,7 @@ This package contains Cassidy talking head and English voiced lines.
 ## Voice options
 
 - Adam Dravean's version is the one that was included with RP 2.3.3.
-- Joey Bracken's version comes in HQ (44kHz) and LQ (22kHz).
+- Joey Bracken's version is 44.1 kHz.
 
 If you prefer Cassidy to be silent, you can use the head without a voice dat.
 

@@ -38,28 +38,25 @@ fetch "https://github.com/BGforgeNet/ipsdoc/releases/download/$IPSDOC_VERSION/ip
 fetch "$MSG_URL" "$msg"
 chmod +x "$dat3" "$ipsdoc"
 
-cd "$src_dir"
-rm -rf "${dst_base}_lq" "${dst_base}_hq"
-mkdir -p "${dst_base}_lq/sound/speech/casdy" "${dst_base}_hq/sound/speech/casdy"
+# The recordings are 48 kHz mono. The original game with sfall plays 44.1 kHz speech right, but cuts 48 kHz short.
+voice_dir="$dst_base/sound/speech/casdy"
+rm -rf "$dst_base"
+mkdir -p "$voice_dir"
 
-# sound quality is better without channel conversion...
+cd "$src_dir"
 for wav in *; do
   # ffmpeg resamples; ipsdoc then stores each result in an ACM as it is.
   # shellcheck disable=SC2086  # We do want splitting for args.
-  ffmpeg -i "$wav" -ac 2 -ar 44100 $FFMPEG_ARGS "${dst_base}_hq/sound/speech/casdy/$wav"
-  # shellcheck disable=SC2086  # We do want splitting for args.
-  ffmpeg -i "$wav" -ac 1 -ar 22050 $FFMPEG_ARGS "${dst_base}_lq/sound/speech/casdy/$wav"
+  ffmpeg -i "$wav" -ac 1 -ar 44100 $FFMPEG_ARGS "$voice_dir/$wav"
 done
-for q in lq hq; do
-  cd "${dst_base}_${q}/sound/speech/casdy"
-  for wav in *.wav; do
-    "$ipsdoc" convert "$wav" "${wav%.wav}.acm"
-  done
-  rm -f ./*.wav
-  # Each quality's lip files follow its own ACMs, from their sound and their line's text.
-  "$ipsdoc" lip --msg "$msg" ./*.acm
-  "$ipsdoc" check .
+cd "$voice_dir"
+for wav in *.wav; do
+  "$ipsdoc" convert "$wav" "${wav%.wav}.acm"
 done
+rm -f ./*.wav
+# Lip files follow the ACMs, from their sound and their line's text.
+"$ipsdoc" lip --msg "$msg" ./*.acm
+"$ipsdoc" check .
 
 # dat3 adds to an existing archive, so start from none.
 rm -f "$out_dir/${MOD_NAME}_head.dat"
