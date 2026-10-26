@@ -9,7 +9,6 @@ MSG_URL="https://raw.githubusercontent.com/BGforgeNet/Fallout2_Unofficial_Patch/
 # zlib level for every .dat: 6 packs in under half the time of 9, for archives about 1% larger.
 DAT3_LEVEL=6
 MOD_NAME="cassidy"
-FFMPEG_ARGS="-c:a pcm_s16le -fflags +bitexact -flags:v +bitexact -flags:a +bitexact -map_metadata -1"
 
 bin_dir="$(realpath extra)/bin"
 src_dir="$(realpath sound_src/joey_bracken)"
@@ -44,16 +43,10 @@ rm -rf "$dst_base"
 mkdir -p "$voice_dir"
 
 cd "$src_dir"
-for wav in *; do
-  # ffmpeg resamples; ipsdoc then stores each result in an ACM as it is.
-  # shellcheck disable=SC2086  # We do want splitting for args.
-  ffmpeg -i "$wav" -ac 1 -ar 44100 $FFMPEG_ARGS "$voice_dir/$wav"
+for wav in *.wav; do
+  "$ipsdoc" convert --rate 44100 "$wav" "$voice_dir/${wav%.wav}.acm"
 done
 cd "$voice_dir"
-for wav in *.wav; do
-  "$ipsdoc" convert "$wav" "${wav%.wav}.acm"
-done
-rm -f ./*.wav
 # Lip files follow the ACMs, from their sound and their line's text.
 "$ipsdoc" lip --msg "$msg" ./*.acm
 "$ipsdoc" check .

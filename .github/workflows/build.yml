@@ -9,17 +9,11 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - name: Install packages
-        run: |
-          set -xeu -o pipefail
-          sudo DEBIAN_FRONTEND=noninteractive eatmydata apt-get install -yqq ffmpeg
-
       - name: Build and package
         run: ./extra/package.sh
 
       - name: Upload artifacts
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        if: "!startsWith(github.ref, 'refs/tags/')"
         with:
           name: cassidy.zip
           path: cassidy*.dat
